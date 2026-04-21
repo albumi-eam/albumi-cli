@@ -1,0 +1,775 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://my.albumi.app/schemas/workspace.v1.schema.json",
+  "title": "Albumi Workspace Export",
+  "description": "Schema for Albumi EAM workspace data export/import format (v1)",
+  "type": "object",
+  "required": ["version"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to this JSON Schema"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Schema version"
+    },
+    "metadata": {
+      "$ref": "#/$defs/Metadata"
+    },
+    "organizations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Organization"
+      },
+      "default": []
+    },
+    "businessCapabilities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/BusinessCapability"
+      },
+      "default": []
+    },
+    "dataObjects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DataObject"
+      },
+      "default": []
+    },
+    "itComponents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ITComponent"
+      },
+      "default": []
+    },
+    "applications": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Application"
+      },
+      "default": []
+    },
+    "integrations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Integration"
+      },
+      "default": []
+    },
+    "initiatives": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Initiative"
+      },
+      "default": []
+    },
+    "users": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/User"
+      },
+      "default": [],
+      "description": "Workspace members. Referenced by ownerUserId across entities."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "Uuid": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "DateString": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date string (YYYY-MM-DD)"
+    },
+    "DateTimeString": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp (e.g. 2026-04-18T12:34:56Z)"
+    },
+    "Metadata": {
+      "type": "object",
+      "properties": {
+        "workspaceId": {
+          "$ref": "#/$defs/Uuid",
+          "description": "ID of the workspace this data was exported from"
+        },
+        "workspaceName": {
+          "type": "string",
+          "description": "Name of the workspace this data was exported from"
+        },
+        "exportedAt": {
+          "$ref": "#/$defs/DateTimeString"
+        },
+        "source": {
+          "type": "string",
+          "description": "Origin of this file: export, template, ai-generated, manual"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of this workspace data"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OrganizationType": {
+      "type": "string",
+      "enum": ["Company", "LegalEntity", "Division", "Region", "Department", "Team", "Unit"]
+    },
+    "EntityStatus": {
+      "type": "string",
+      "enum": ["Active", "Archived"]
+    },
+    "WorkspaceRole": {
+      "type": "string",
+      "enum": ["Admin", "Contributor", "Viewer"]
+    },
+    "User": {
+      "type": "object",
+      "required": ["id", "email"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid",
+          "description": "User ID in the source workspace. Remapped on import by matching email to Account."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Email of the backing Account. Used to resolve user on import."
+        },
+        "name": {
+          "type": ["string", "null"],
+          "description": "Display name within the source workspace."
+        },
+        "role": {
+          "$ref": "#/$defs/WorkspaceRole",
+          "description": "Workspace role in the source workspace."
+        }
+      },
+      "additionalProperties": false
+    },
+    "Organization": {
+      "type": "object",
+      "required": ["id", "name", "type"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"],
+          "maxLength": 2000
+        },
+        "type": {
+          "$ref": "#/$defs/OrganizationType"
+        },
+        "status": {
+          "$ref": "#/$defs/EntityStatus"
+        },
+        "parentId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "ownerUserId": {
+          "$ref": "#/$defs/Uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "StrategicImportance": {
+      "type": "string",
+      "enum": ["High", "Medium", "Low"]
+    },
+    "MaturityLevel": {
+      "type": "string",
+      "enum": ["Initial", "Developing", "Defined", "Managed", "Optimized"]
+    },
+    "BusinessCapability": {
+      "type": "object",
+      "required": ["id", "name", "organizationId"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"],
+          "maxLength": 2000
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "status": {
+          "$ref": "#/$defs/EntityStatus"
+        },
+        "strategicImportance": {
+          "$ref": "#/$defs/StrategicImportance"
+        },
+        "maturityLevel": {
+          "$ref": "#/$defs/MaturityLevel"
+        },
+        "parentId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "organizationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "ownerUserId": {
+          "$ref": "#/$defs/Uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "DataClassification": {
+      "type": "string",
+      "enum": ["Public", "Internal", "Confidential", "Restricted"]
+    },
+    "DataObject": {
+      "type": "object",
+      "required": ["id", "name", "organizationId"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"],
+          "maxLength": 2000
+        },
+        "status": {
+          "$ref": "#/$defs/EntityStatus"
+        },
+        "classification": {
+          "$ref": "#/$defs/DataClassification"
+        },
+        "piiFlag": {
+          "type": "boolean"
+        },
+        "pciFlag": {
+          "type": "boolean"
+        },
+        "retentionPeriod": {
+          "type": ["string", "null"],
+          "maxLength": 100
+        },
+        "capabilityIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Uuid"
+          }
+        },
+        "parentId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "organizationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "ownerUserId": {
+          "$ref": "#/$defs/Uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "LicenseType": {
+      "type": "string",
+      "enum": ["OpenSource", "Commercial", "Subscription", "Perpetual", "Freemium"]
+    },
+    "ITComponent": {
+      "type": "object",
+      "required": ["id", "name", "organizationId"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"],
+          "maxLength": 2000
+        },
+        "vendor": {
+          "type": ["string", "null"],
+          "maxLength": 255
+        },
+        "version": {
+          "type": ["string", "null"],
+          "maxLength": 50
+        },
+        "licenseType": {
+          "$ref": "#/$defs/LicenseType"
+        },
+        "lifecyclePlanDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "lifecyclePhaseInDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "lifecycleActiveDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "lifecyclePhaseOutDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "lifecycleEndOfLifeDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "organizationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "ownerUserId": {
+          "$ref": "#/$defs/Uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ApplicationType": {
+      "type": "string",
+      "enum": ["BusinessApplication", "DataAndAnalytics", "Collaboration", "CustomerFacing", "Other"]
+    },
+    "HostingType": {
+      "type": "string",
+      "enum": ["OnPremise", "Cloud", "Hybrid", "Saas"]
+    },
+    "CloudProvider": {
+      "type": "string",
+      "enum": ["Aws", "Azure", "Gcp", "OracleCloud", "IbmCloud", "Other"]
+    },
+    "TimeClassification": {
+      "type": "string",
+      "enum": ["Tolerate", "Invest", "Migrate", "Eliminate"]
+    },
+    "FitLevel": {
+      "type": "string",
+      "enum": ["Excellent", "Adequate", "Insufficient"]
+    },
+    "BusinessCriticality": {
+      "type": "string",
+      "enum": ["MissionCritical", "BusinessCritical", "BusinessOperational", "Administrative"]
+    },
+    "DataObjectOperation": {
+      "type": "string",
+      "enum": ["Create", "Read", "Update", "Delete"]
+    },
+    "PortDirection": {
+      "type": "string",
+      "enum": ["Input", "Output"]
+    },
+    "PortProtocol": {
+      "type": "string",
+      "enum": ["Rest", "Soap", "Grpc", "Mq", "Kafka", "File", "Sftp", "Jdbc"]
+    },
+    "PortFormat": {
+      "type": "string",
+      "enum": ["Json", "Xml", "Csv", "Avro", "Protobuf"]
+    },
+    "PortAuthentication": {
+      "type": "string",
+      "enum": ["None", "Basic", "Oauth2", "ApiKey", "Mtls"]
+    },
+    "ApplicationInterface": {
+      "type": "object",
+      "required": ["id", "name", "direction", "protocol"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"],
+          "maxLength": 2000
+        },
+        "direction": {
+          "$ref": "#/$defs/PortDirection"
+        },
+        "protocol": {
+          "$ref": "#/$defs/PortProtocol"
+        },
+        "format": {
+          "$ref": "#/$defs/PortFormat"
+        },
+        "endpoint": {
+          "type": ["string", "null"],
+          "maxLength": 2000
+        },
+        "authentication": {
+          "$ref": "#/$defs/PortAuthentication"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ApplicationCapabilityRef": {
+      "type": "object",
+      "required": ["capabilityId"],
+      "properties": {
+        "capabilityId": {
+          "$ref": "#/$defs/Uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ApplicationITComponentRef": {
+      "type": "object",
+      "required": ["itComponentId"],
+      "properties": {
+        "itComponentId": {
+          "$ref": "#/$defs/Uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ApplicationDataObjectRef": {
+      "type": "object",
+      "required": ["dataObjectId"],
+      "properties": {
+        "dataObjectId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DataObjectOperation"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Application": {
+      "type": "object",
+      "required": ["id", "name", "organizationId"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"],
+          "maxLength": 2000
+        },
+        "applicationType": {
+          "$ref": "#/$defs/ApplicationType"
+        },
+        "lifecyclePlanDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "lifecyclePhaseInDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "lifecycleActiveDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "lifecyclePhaseOutDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "lifecycleEndOfLifeDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "timeClassification": {
+          "$ref": "#/$defs/TimeClassification"
+        },
+        "functionalFit": {
+          "$ref": "#/$defs/FitLevel"
+        },
+        "technicalFit": {
+          "$ref": "#/$defs/FitLevel"
+        },
+        "businessCriticality": {
+          "$ref": "#/$defs/BusinessCriticality"
+        },
+        "hostingType": {
+          "$ref": "#/$defs/HostingType"
+        },
+        "cloudProvider": {
+          "$ref": "#/$defs/CloudProvider"
+        },
+        "dataClassification": {
+          "$ref": "#/$defs/DataClassification"
+        },
+        "gdprRelevant": {
+          "type": "boolean"
+        },
+        "soxRelevant": {
+          "type": "boolean"
+        },
+        "pciDssRelevant": {
+          "type": "boolean"
+        },
+        "organizationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "ownerUserId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ApplicationCapabilityRef"
+          }
+        },
+        "itComponents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ApplicationITComponentRef"
+          }
+        },
+        "dataObjects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ApplicationDataObjectRef"
+          }
+        },
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ApplicationInterface"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "IntegrationType": {
+      "type": "string",
+      "enum": ["Api", "FileTransfer", "MessageQueue", "Event", "DataExchange", "DatabaseLink"]
+    },
+    "IntegrationInitiator": {
+      "type": "string",
+      "enum": ["Push", "Pull", "EventDriven"]
+    },
+    "IntegrationDeliveryPattern": {
+      "type": "string",
+      "enum": ["RequestResponse", "FireAndForget", "PublishSubscribe", "EventDriven", "Batch", "Streaming"]
+    },
+    "IntegrationFrequency": {
+      "type": "string",
+      "enum": ["RealTime", "NearRealTime", "Hourly", "Daily", "Weekly", "Monthly", "OnDemand"]
+    },
+    "IntegrationProtocol": {
+      "type": "string",
+      "enum": ["Https", "Http", "Grpc", "Websocket", "Amqp", "Kafka", "Sftp", "Ftp", "Jdbc", "Odbc", "Soap"]
+    },
+    "IntegrationDataFormat": {
+      "type": "string",
+      "enum": ["Json", "Xml", "Csv", "Protobuf", "Avro", "Parquet", "Binary"]
+    },
+    "IntegrationAuthentication": {
+      "type": "string",
+      "enum": ["None", "ApiKey", "Basic", "Oauth2", "Mtls", "Saml", "Jwt"]
+    },
+    "IntegrationDataObjectOperation": {
+      "type": "string",
+      "enum": ["Create", "Update", "Delete"],
+      "description": "Operations on integration data objects. Only CUD (no Read) — integrations carry data changes (create/update/delete events), not read operations. Reading is a local application operation."
+    },
+    "IntegrationDataObjectRef": {
+      "type": "object",
+      "required": ["dataObjectId"],
+      "properties": {
+        "dataObjectId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IntegrationDataObjectOperation"
+          },
+          "description": "CUD operations only. Read is NOT valid on integrations — integrations carry data changes, not read operations."
+        }
+      },
+      "additionalProperties": false
+    },
+    "IntegrationMiddlewareRef": {
+      "type": "object",
+      "required": ["itComponentId"],
+      "properties": {
+        "itComponentId": {
+          "$ref": "#/$defs/Uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Integration": {
+      "type": "object",
+      "required": ["id", "name", "sourceApplicationId", "targetApplicationId", "organizationId"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"],
+          "maxLength": 2000
+        },
+        "integrationType": {
+          "$ref": "#/$defs/IntegrationType"
+        },
+        "initiator": {
+          "$ref": "#/$defs/IntegrationInitiator"
+        },
+        "deliveryPattern": {
+          "$ref": "#/$defs/IntegrationDeliveryPattern"
+        },
+        "lifecyclePlanDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "lifecyclePhaseInDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "lifecycleActiveDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "lifecyclePhaseOutDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "lifecycleEndOfLifeDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "sourceApplicationId": {
+          "$ref": "#/$defs/Uuid",
+          "description": "Application where data originates. Direction is DATA FLOW, not request direction. Example: if Storefront reads product data from Catalog Service, source=CatalogService (data origin), target=Storefront (data consumer)."
+        },
+        "targetApplicationId": {
+          "$ref": "#/$defs/Uuid",
+          "description": "Application where data flows to (consumer). Direction is DATA FLOW, not request direction."
+        },
+        "sourceInterfaceId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "targetInterfaceId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "frequency": {
+          "$ref": "#/$defs/IntegrationFrequency"
+        },
+        "protocol": {
+          "$ref": "#/$defs/IntegrationProtocol"
+        },
+        "dataFormat": {
+          "$ref": "#/$defs/IntegrationDataFormat"
+        },
+        "authentication": {
+          "$ref": "#/$defs/IntegrationAuthentication"
+        },
+        "organizationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "ownerUserId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "middlewares": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IntegrationMiddlewareRef"
+          }
+        },
+        "dataObjects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IntegrationDataObjectRef"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "InitiativeType": {
+      "type": "string",
+      "enum": ["Migration", "Modernization", "Consolidation", "Expansion", "Decommission"]
+    },
+    "InitiativeStatus": {
+      "type": "string",
+      "enum": ["Draft", "Planned", "Active", "OnHold", "Completed", "Cancelled"]
+    },
+    "ImpactType": {
+      "type": "string",
+      "enum": ["Add", "Modify", "Remove"]
+    },
+    "InitiativeApplicationImpact": {
+      "type": "object",
+      "required": ["applicationId", "impactType"],
+      "properties": {
+        "applicationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "impactType": {
+          "$ref": "#/$defs/ImpactType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Initiative": {
+      "type": "object",
+      "required": ["id", "name", "organizationId"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"],
+          "maxLength": 2000
+        },
+        "type": {
+          "$ref": "#/$defs/InitiativeType"
+        },
+        "status": {
+          "$ref": "#/$defs/InitiativeStatus"
+        },
+        "startDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "endDate": {
+          "$ref": "#/$defs/DateString"
+        },
+        "organizationId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "ownerUserId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "applicationImpacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InitiativeApplicationImpact"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

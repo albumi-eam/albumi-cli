@@ -1,0 +1,17 @@
+{
+  "name": "albumi-cli",
+  "owner": {
+    "name": "Albumi",
+    "url": "https://albumi.app"
+  },
+  "plugins": [
+    {
+      "name": "albumi",
+      "source": ".",
+      "description": "Albumi EAM — MCP server + workspace skill for pulling, validating, auditing, and pushing architecture data.",
+      "version": "0.1.0",
+      "category": "integration",
+      "keywords": ["albumi", "eam", "enterprise-architecture"]
+    }
+  ]
+}

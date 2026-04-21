@@ -1,0 +1,19 @@
+{
+  "name": "albumi",
+  "version": "0.1.0",
+  "description": "Albumi EAM — MCP server + workspace skill for pulling, validating, auditing, and pushing architecture data.",
+  "author": {
+    "name": "Albumi",
+    "url": "https://albumi.app"
+  },
+  "homepage": "https://docs.albumi.app/ai/mcp-setup/",
+  "repository": "https://github.com/albumi-eam/albumi-cli",
+  "license": "MIT",
+  "keywords": [
+    "albumi",
+    "eam",
+    "enterprise-architecture",
+    "mcp",
+    "architecture"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "albumi": {
+      "command": "npx",
+      "args": ["-y", "@albumi/cli"]
+    }
+  }
+}
