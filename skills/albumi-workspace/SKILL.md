@@ -64,6 +64,7 @@ Credentials land in `~/.albumi/credentials.json`. For CI/CD, set `ALBUMI_API_TOK
 ```
 /plugin marketplace add albumi-eam/albumi-cli
 /plugin install albumi@albumi-cli
+/reload-plugins
 ```
 
 Then `albumi login`. The plugin auto-registers the MCP server and installs this skill.

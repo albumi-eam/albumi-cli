@@ -22,7 +22,10 @@ Three options depending on your setup.
 ```
 /plugin marketplace add albumi-eam/albumi-cli
 /plugin install albumi@albumi-cli
+/reload-plugins
 ```
+
+(The last command activates the MCP server and skill for the current session.)
 
 This registers the MCP server and installs the `albumi-workspace` skill. Then:
 
