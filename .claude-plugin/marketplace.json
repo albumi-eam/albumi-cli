@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "albumi",
-      "source": ".",
+      "source": "./",
       "description": "Albumi EAM — MCP server + workspace skill for pulling, validating, auditing, and pushing architecture data.",
       "version": "0.1.0",
       "category": "integration",
