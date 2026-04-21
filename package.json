@@ -1,6 +1,6 @@
 {
   "name": "@albumi/cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Albumi EAM CLI and MCP server — pull, validate, audit, and push workspace data",
   "type": "module",
   "bin": {
