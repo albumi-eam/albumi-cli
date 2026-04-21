@@ -67,6 +67,14 @@
       },
       "default": []
     },
+    "techCategories": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/TechCategory"
+      },
+      "default": [],
+      "description": "Technology category taxonomy referenced by ITComponent.techCategoryId."
+    },
     "users": {
       "type": "array",
       "items": {
@@ -295,7 +303,7 @@
     },
     "ITComponent": {
       "type": "object",
-      "required": ["id", "name", "organizationId"],
+      "required": ["id", "name", "organizationId", "techCategoryId"],
       "properties": {
         "id": {
           "$ref": "#/$defs/Uuid"
@@ -308,6 +316,10 @@
         "description": {
           "type": ["string", "null"],
           "maxLength": 2000
+        },
+        "techCategoryId": {
+          "$ref": "#/$defs/Uuid",
+          "description": "References a TechCategory in techCategories[]. NOT NULL at the DB level."
         },
         "vendor": {
           "type": ["string", "null"],
@@ -340,6 +352,37 @@
         },
         "ownerUserId": {
           "$ref": "#/$defs/Uuid"
+        }
+      },
+      "additionalProperties": false
+    },
+    "TechCategory": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"],
+          "maxLength": 2000
+        },
+        "parentId": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "sortOrder": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "additionalProperties": false

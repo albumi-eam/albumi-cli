@@ -106,7 +106,9 @@ The `albumi-workspace` skill (Claude Code only, via Option A) routes the agent:
 - One-shot checks → suggest CLI (`albumi validate <file>`).
 - Edit loops → drive MCP tools in sequence (`pull → edit → validate → audit → push`).
 
-Invoke it explicitly with `/albumi-workspace` if the agent didn't auto-activate it, or just describe your goal — the skill usually kicks in on context.
+Skills auto-activate heuristically — Claude Code loads them when your message matches the skill description. For reliable activation, invoke explicitly with **`/albumi-workspace`** at the start of an Albumi-related session.
+
+(Note: MCP tools themselves are always available to the agent regardless of skill state. The skill is an extra layer that improves routing decisions.)
 
 Other MCP clients still get the tools; they don't get the routing skill.
 
