@@ -1,4 +1,4 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 const GENERATE_PROMPT = `You are an Enterprise Architecture expert generating workspace data for Albumi EAM platform.
 
@@ -91,7 +91,7 @@ Strategic projects affecting applications.
 
 1. Save the JSON to a local file (e.g. \`workspace.json\`).
 2. Call \`validate\` to verify the file is valid.
-3. If the user wants to import it, use \`/albumi-workspace:push_workspace\`.
+3. If the user wants to import it, use \`/mcp__albumi__push_workspace\`.
 
 ## Working with generated files
 
@@ -104,13 +104,13 @@ jq '.integrations[] | {name, sourceApplicationId, targetApplicationId}' workspac
 
 export function registerGeneratePrompt(server: McpServer) {
   server.prompt(
-    'generate_workspace',
-    'Generate workspace JSON from a text description of an IT landscape. Provides schema knowledge and rules for creating valid workspace data.',
+    "generate_workspace",
+    "Generate workspace JSON from a text description of an IT landscape. Provides schema knowledge and rules for creating valid workspace data.",
     async () => ({
       messages: [
         {
-          role: 'user' as const,
-          content: { type: 'text' as const, text: GENERATE_PROMPT },
+          role: "user" as const,
+          content: { type: "text" as const, text: GENERATE_PROMPT },
         },
       ],
     }),

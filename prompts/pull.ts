@@ -1,4 +1,4 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 const PULL_PROMPT = `Download a workspace from the Albumi server and save it as a local JSON file.
 
@@ -12,9 +12,9 @@ const PULL_PROMPT = `Download a workspace from the Albumi server and save it as 
 4. Report: file path, workspace name, size, entity counts.
 5. Remind the user of the next steps:
    - Edit the file as needed
-   - Run \`/albumi-workspace:validate\` to check for errors
-   - Run \`/albumi-workspace:audit\` for architecture analysis
-   - When ready, run \`/albumi-workspace:push_workspace\` to send changes back to the server
+   - Run \`/mcp__albumi__validate\` to check for errors
+   - Run \`/mcp__albumi__audit\` for architecture analysis
+   - When ready, run \`/mcp__albumi__push_workspace\` to send changes back to the server
 
 ## Working with the file
 
@@ -29,13 +29,13 @@ This keeps context small — workspace files can be thousands of lines.`;
 
 export function registerPullPrompt(server: McpServer) {
   server.prompt(
-    'pull_workspace',
-    'Download the workspace from the server to a local file. Starting point of the edit workflow.',
+    "pull_workspace",
+    "Download the workspace from the server to a local file. Starting point of the edit workflow.",
     async () => ({
       messages: [
         {
-          role: 'user' as const,
-          content: { type: 'text' as const, text: PULL_PROMPT },
+          role: "user" as const,
+          content: { type: "text" as const, text: PULL_PROMPT },
         },
       ],
     }),

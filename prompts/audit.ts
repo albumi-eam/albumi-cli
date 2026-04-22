@@ -1,4 +1,4 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 const AUDIT_PROMPT = `You are a senior Enterprise Architect performing a comprehensive architecture audit on an Albumi workspace. You have deep expertise in TOGAF, ArchiMate, and enterprise architecture best practices.
 
@@ -111,17 +111,17 @@ Prioritized list of actions, grouped by effort (quick wins, medium effort, major
 When the user asks to fix issues:
 1. Edit the local workspace JSON file to address findings
 2. Call \`validate\` to verify changes are still valid
-3. When the user is ready, use \`/albumi-workspace:push_workspace\` to send changes to the server`;
+3. When the user is ready, use \`/mcp__albumi__push_workspace\` to send changes to the server`;
 
 export function registerAuditPrompt(server: McpServer) {
   server.prompt(
-    'audit',
-    'Comprehensive 60-check architecture audit. Covers structural integrity, data quality, lifecycle, network analysis, portfolio health, and compliance.',
+    "audit",
+    "Comprehensive 60-check architecture audit. Covers structural integrity, data quality, lifecycle, network analysis, portfolio health, and compliance.",
     async () => ({
       messages: [
         {
-          role: 'user' as const,
-          content: { type: 'text' as const, text: AUDIT_PROMPT },
+          role: "user" as const,
+          content: { type: "text" as const, text: AUDIT_PROMPT },
         },
       ],
     }),

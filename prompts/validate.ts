@@ -1,4 +1,4 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 const VALIDATE_PROMPT = `Validate a local workspace JSON file against the schema and referential integrity rules.
 
@@ -6,7 +6,7 @@ const VALIDATE_PROMPT = `Validate a local workspace JSON file against the schema
 
 1. Call the \`validate\` tool with the file path.
    - If the user didn't specify a path, use \`./workspace.json\` (the default from pull).
-2. If valid — confirm and suggest running \`/albumi-workspace:audit\` for deeper analysis.
+2. If valid — confirm and suggest running \`/mcp__albumi__audit\` for deeper analysis.
 3. If errors found:
    - List each error with its path and message.
    - Suggest specific fixes for each error.
@@ -27,13 +27,13 @@ jq '.applications[2].organizationId = "correct-uuid"' workspace.json > tmp.json 
 
 export function registerValidatePrompt(server: McpServer) {
   server.prompt(
-    'validate',
-    'Check a local workspace JSON file for schema and referential integrity errors.',
+    "validate",
+    "Check a local workspace JSON file for schema and referential integrity errors.",
     async () => ({
       messages: [
         {
-          role: 'user' as const,
-          content: { type: 'text' as const, text: VALIDATE_PROMPT },
+          role: "user" as const,
+          content: { type: "text" as const, text: VALIDATE_PROMPT },
         },
       ],
     }),
